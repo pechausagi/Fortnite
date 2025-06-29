@@ -161,7 +161,7 @@
 <body>
   <div class="container">
     <h1>ぺちゃうさのチーム分け！</h1>
-    <h2>参加者リスト</h2>
+    <h2>メンバーリスト</h2>
     <ul class="participants" id="participants-list">
       <li><label><input type="checkbox" value="ぱいな">ぱいな</label></li>
       <li><label><input type="checkbox" value="しぇふ">しぇふ</label></li>
