@@ -183,6 +183,7 @@
       <li><label><input type="checkbox" value="きんちゃん">きんちゃん</label></li>
       <li><label><input type="checkbox" value="ぺちゃうさ">ぺちゃうさ</label></li>
       <li><label><input type="checkbox" value="だいちゃん">だいちゃん</label></li>
+      <li><label><input type="checkbox" value="ちぇるしぃ">ちぇるしぃ</label></li>
       <li><label><input type="checkbox" value="ご新規様">ご新規様</label></li>
     </ul>
     <div class="team-count-wrap">
