@@ -181,12 +181,16 @@
     }
     @media (max-width: 500px) {
       .container { padding: 1.1em 0.4em;}
+      .digital-clock { font-size: 0.95em; min-width: 74px; padding-left: 0.7em;}
       .team-card { min-width: 100px; max-width: 99vw;}
     }
   </style>
 </head>
 <body>
   <div class="container">
+    <div class="clock-wrap">
+      <span class="digital-clock" id="digital-clock"></span>
+    </div>
     <h1>ぺちゃうさのチーム分け！</h1>
     <h2>メンバーリスト</h2>
     <ul class="participants" id="participants-list">
@@ -226,6 +230,18 @@
   </div>
 
   <script>
+    // デジタル時計の表示
+    function updateClock() {
+      const clock = document.getElementById('digital-clock');
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      clock.textContent = `${h}:${m}:${s}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
     function shuffle(array) {
       const arr = array.slice();
       for (let i = arr.length - 1; i > 0; i--) {
