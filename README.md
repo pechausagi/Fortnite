@@ -1,7 +1,6 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>ぺちゃうさのチーム分け！</title>
   <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@700&family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -16,15 +15,14 @@
       align-items: center;
     }
     .container {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.93);
       border-radius: 24px;
       box-shadow: 0 6px 36px rgba(160, 120, 180, 0.18);
       max-width: 430px;
       width: 96vw;
-      margin: 32px 0 16px 0;
-      padding: 2.2em 1.2em 1.3em 1.2em;
+      margin: 48px 0 24px 0;
+      padding: 2.5em 2em 1.5em 2em;
       animation: fadeIn 1s;
-      box-sizing: border-box;
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(24px);}
@@ -37,7 +35,7 @@
     }
     .digital-clock {
       font-family: 'Kaisei Decol', 'Zen Maru Gothic', monospace;
-      font-size: 1.15em;
+      font-size: 1.1em;
       color: #fff;
       background: linear-gradient(90deg, #d1b2ff 60%, #f9eaff 100%);
       box-shadow: 0 2px 6px rgba(160, 120, 180, 0.09);
@@ -50,10 +48,12 @@
       text-align: center;
       margin-top: 0.5em;
       margin-bottom: 0.1em;
-      font-weight: 700;
-      text-shadow: 0 1px 2px #cbb6e9, 0 0px 3px #fff7;
+      position: relative;
+      z-index: 2;
       box-sizing: border-box;
       transition: background 0.3s;
+      font-weight: 700;
+      text-shadow: 0 1px 2px #cbb6e9, 0 0px 3px #fff7;
     }
     h1 {
       font-family: 'Kaisei Decol', cursive;
@@ -62,14 +62,12 @@
       margin-bottom: 0.5em;
       letter-spacing: 0.02em;
       text-align: center;
-      word-break: keep-all;
     }
     h2 {
       font-size: 1.1em;
       color: #5b41a9;
-      margin: 1.4em 0 0.7em;
+      margin: 1.8em 0 0.7em;
       letter-spacing: 0.01em;
-      text-align: center;
     }
     ul.participants {
       list-style: none;
@@ -78,12 +76,9 @@
       display: flex;
       flex-wrap: wrap;
       gap: 0.7em 1.2em;
-      justify-content: center;
     }
     ul.participants li {
       flex: 1 1 40%;
-      min-width: 120px;
-      max-width: 48vw;
     }
     label {
       display: flex;
@@ -104,35 +99,29 @@
       background: #f3e6fd;
     }
     .team-count-wrap {
-      margin: 1em 0 1.3em 0;
+      margin: 1em 0 1.5em 0;
       font-size: 1.1em;
       color: #6a50b2;
       text-align: left;
-      display: flex;
-      align-items: center;
-      gap: 0.5em;
-      justify-content: center;
     }
     input[type="number"] {
-      width: 52px;
-      padding: 0.24em 0.36em;
+      width: 48px;
+      padding: 0.2em 0.3em;
       border-radius: 8px;
       border: 1.2px solid #e5d2fa;
       font-size: 1em;
+      margin-left: 0.5em;
       background: #faf8ff;
-      text-align: right;
     }
     .btns {
       display: flex;
       gap: 1em;
       margin-bottom: 1em;
-      justify-content: center;
-      flex-wrap: wrap;
     }
     button {
       font-family: inherit;
       font-size: 1.07em;
-      padding: 0.5em 1.25em;
+      padding: 0.48em 1.2em;
       border: none;
       border-radius: 1.4em;
       background: linear-gradient(90deg, #b385f7 0%, #a8e5ff 100%);
@@ -150,10 +139,10 @@
     hr {
       border: none;
       border-top: 1.5px dashed #d9bcf7;
-      margin: 1.5em 0 1em 0;
+      margin: 1.5em 0;
     }
     .result {
-      margin-top: 1.3em;
+      margin-top: 1.5em;
       display: flex;
       flex-wrap: wrap;
       gap: 1.5em 1em;
@@ -169,7 +158,6 @@
       max-width: 180px;
       text-align: center;
       animation: fadeInTeam 0.5s;
-      word-break: break-all;
     }
     @keyframes fadeInTeam {
       from { opacity: 0; transform: scale(0.95);}
@@ -191,57 +179,10 @@
       margin-bottom: 0.2em;
       padding: 0.1em 0;
     }
-    /* スクロールバーをやさしい色に */
-    ::-webkit-scrollbar {
-      width: 8px;
-      background: #f3ebff;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #d4b2fa;
-      border-radius: 8px;
-    }
-    @media (max-width: 600px) {
-      .container {
-        padding: 0.8em 0.3em 1em 0.3em;
-        margin: 12px 0 8px 0;
-        width: 99vw;
-        max-width: 99vw;
-      }
-      h1 {
-        font-size: 1.24em;
-        margin-bottom: 0.28em;
-      }
-      h2 {
-        font-size: 1em;
-        margin: 1em 0 0.34em;
-      }
-      .digital-clock {
-        font-size: 0.98em;
-        min-width: 74px;
-        padding-left: 0.7em;
-      }
-      ul.participants {
-        gap: 0.36em 0.3em;
-      }
-      ul.participants li {
-        min-width: 95px;
-        max-width: 99vw;
-        flex: 1 1 80%;
-      }
-      .btns { flex-direction: column; gap: 0.5em; }
-      .team-card {
-        min-width: 90px;
-        max-width: 95vw;
-        font-size: 0.97em;
-        padding: 0.7em 0.5em 0.5em 0.5em;
-      }
-      .result { gap: 0.6em 0.3em;}
-    }
-    @media (max-width: 400px) {
-      .container {
-        padding: 0.5em 0.1em 0.5em 0.1em;
-      }
-      h1 { font-size: 1em; }
+    @media (max-width: 500px) {
+      .container { padding: 1.1em 0.4em;}
+      .digital-clock { font-size: 0.95em; min-width: 74px; padding-left: 0.7em;}
+      .team-card { min-width: 100px; max-width: 99vw;}
     }
   </style>
 </head>
