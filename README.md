@@ -28,6 +28,33 @@
       from { opacity: 0; transform: translateY(24px);}
       to { opacity: 1; transform: translateY(0);}
     }
+    .clock-wrap {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 0.3em;
+    }
+    .digital-clock {
+      font-family: 'Kaisei Decol', 'Zen Maru Gothic', monospace;
+      font-size: 1.1em;
+      color: #fff;
+      background: linear-gradient(90deg, #d1b2ff 60%, #f9eaff 100%);
+      box-shadow: 0 2px 6px rgba(160, 120, 180, 0.09);
+      border-radius: 14px;
+      padding: 0.22em 1em 0.22em 0.92em;
+      letter-spacing: 0.16em;
+      border: 2px solid #e3c6ff;
+      display: inline-block;
+      min-width: 94px;
+      text-align: center;
+      margin-top: 0.5em;
+      margin-bottom: 0.1em;
+      position: relative;
+      z-index: 2;
+      box-sizing: border-box;
+      transition: background 0.3s;
+      font-weight: 700;
+      text-shadow: 0 1px 2px #cbb6e9, 0 0px 3px #fff7;
+    }
     h1 {
       font-family: 'Kaisei Decol', cursive;
       font-size: 2em;
