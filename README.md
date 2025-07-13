@@ -191,7 +191,8 @@
     <div class="clock-wrap">
       <span class="digital-clock" id="digital-clock"></span>
     </div>
-    <h1>ぺちゃうさのチーム分け！</h1>
+    <h1>ぺちゃうさの<br>
+        チーム分け！</h1>
     <h2>メンバーリスト</h2>
     <ul class="participants" id="participants-list">
       <li><label><input type="checkbox" value="ぱいな">ぱいな</label></li>
