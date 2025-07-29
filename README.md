@@ -210,7 +210,6 @@
       <li><label><input type="checkbox" value="ばなな">ばなな</label></li>
       <li><label><input type="checkbox" value="ぺぺみや">ぺぺみや</label></li>
       <li><label><input type="checkbox" value="りご">りご</label></li>
-      <li><label><input type="checkbox" value="きら">きら</label></li>
       <li><label><input type="checkbox" value="きんちゃん">きんちゃん</label></li>
       <li><label><input type="checkbox" value="ぺちゃうさ">ぺちゃうさ</label></li>
       <li><label><input type="checkbox" value="だいちゃん">だいちゃん</label></li>
