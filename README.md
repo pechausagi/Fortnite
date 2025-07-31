@@ -190,6 +190,7 @@
   <div class="container">
     <div class="clock-wrap">
       <span class="digital-clock" id="digital-clock"></span>
+   </div>   
    <div class="title-bg-wrap">
   <img src="image.png" alt="ペチャウサイラスト" class="title-bg-img">
     <h1>ぺちゃうさの<br>
