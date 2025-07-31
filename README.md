@@ -195,6 +195,7 @@
   <img src="image.png" alt="ペチャウサイラスト" class="title-bg-img">
     <h1>ぺちゃうさの<br>
         チーム分け！</h1>
+  　</div>
     <h2>メンバーリスト</h2>
     <ul class="participants" id="participants-list">
       <li><label><input type="checkbox" value="ぱいな">ぱいな</label></li>
