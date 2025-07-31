@@ -293,5 +293,4 @@
       document.getElementById('result').innerHTML = '';
     }
   </script>
-</body>
-</html>
+
