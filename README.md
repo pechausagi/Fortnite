@@ -217,9 +217,7 @@
       <li><label><input type="checkbox" value="ぺちゃうさ">ぺちゃうさ</label></li>
       <li><label><input type="checkbox" value="ちぇるしぃ">ちぇるしぃ</label></li>
       <li><label><input type="checkbox" value="そうさん">そうさん</label></li>
-      <li><label><input type="checkbox" value="りんご">りんご</label></li>
       <li><label><input type="checkbox" value="みい">みい</label></li>
-      <li><label><input type="checkbox" value="えぬ">えぬ</label></li>
       <li><label><input type="checkbox" value="おは">おは</label></li>
       <li><label><input type="checkbox" value="ねねこ">ねねこ</label></li>
       <li><label><input type="checkbox" value="REI">REI</label></li>
