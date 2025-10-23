@@ -215,7 +215,6 @@
       <li><label><input type="checkbox" value="りご">りご</label></li>
       <li><label><input type="checkbox" value="きんちゃん">きんちゃん</label></li>
       <li><label><input type="checkbox" value="ぺちゃうさ">ぺちゃうさ</label></li>
-      <li><label><input type="checkbox" value="ちぇるしぃ">ちぇるしぃ</label></li>
       <li><label><input type="checkbox" value="そうさん">そうさん</label></li>
       <li><label><input type="checkbox" value="みい">みい</label></li>
       <li><label><input type="checkbox" value="おは">おは</label></li>
@@ -224,6 +223,7 @@
       <li><label><input type="checkbox" value="かえる">かえる</label></li>
       <li><label><input type="checkbox" value="ばんぶー">ばんぶー</label></li>
       <li><label><input type="checkbox" value="セイコー">セイコー</label></li>
+      <li><label><input type="checkbox" value="ぽむぷりんりん">ぽむぷりんりん</label></li>
       <li><label><input type="checkbox" value="ご新規様">ご新規様</label></li>
     </ul>
     <div class="team-count-wrap">
