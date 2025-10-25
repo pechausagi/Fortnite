@@ -224,6 +224,7 @@
       <li><label><input type="checkbox" value="ばんぶー">ばんぶー</label></li>
       <li><label><input type="checkbox" value="セイコー">セイコー</label></li>
       <li><label><input type="checkbox" value="ぽむぷりんりん">ぽむぷりんりん</label></li>
+      <li><label><input type="checkbox" value="アロキチ">アロキチ</label></li>
       <li><label><input type="checkbox" value="ご新規様">ご新規様</label></li>
     </ul>
     <div class="team-count-wrap">
