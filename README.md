@@ -226,6 +226,7 @@
       <li><label><input type="checkbox" value="ぽむぷりんりん">ぽむぷりんりん</label></li>
       <li><label><input type="checkbox" value="アロキチ">アロキチ</label></li>
       <li><label><input type="checkbox" value="みみこ">みみこ</label></li>
+      <li><label><input type="checkbox" value="バレー">バレー</label></li>
       <li><label><input type="checkbox" value="ご新規様">ご新規様</label></li>
     </ul>
     <div class="team-count-wrap">
