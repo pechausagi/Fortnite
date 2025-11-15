@@ -222,7 +222,6 @@
       <li><label><input type="checkbox" value="REI">REI</label></li>
       <li><label><input type="checkbox" value="かえる">かえる</label></li>
       <li><label><input type="checkbox" value="ばんぶー">ばんぶー</label></li>
-      <li><label><input type="checkbox" value="セイコー">セイコー</label></li>
       <li><label><input type="checkbox" value="アロキチ">アロキチ</label></li>
       <li><label><input type="checkbox" value="ぽむぷりんりん">ぽむぷりんりん</label></li>
       <li><label><input type="checkbox" value="バレー">バレー</label></li>
