@@ -221,7 +221,6 @@
       <li><label><input type="checkbox" value="とみ">とみ</label></li>
       <li><label><input type="checkbox" value="とーれす">とーれす</label></li>
       <li><label><input type="checkbox" value="さとぽん">さとぽん</label></li>
-      <li><label><input type="checkbox" value="うらら">うらら</label></li>
       <li><label><input type="checkbox" value="けい">けい</label></li>
       <li><label><input type="checkbox" value="ぺっぺん">ぺっぺん</label></li>
       <li><label><input type="checkbox" value="はにーびー">はにーびー</label></li>
