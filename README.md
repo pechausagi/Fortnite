@@ -225,6 +225,7 @@
       <li><label><input type="checkbox" value="ぺっぺん">ぺっぺん</label></li>
       <li><label><input type="checkbox" value="はにーびー">はにーびー</label></li>
       <li><label><input type="checkbox" value="べねっと">べねっと</label></li>
+      <li><label><input type="checkbox" value="ごんつ">ごんつ</label></li>
       <li><label><input type="checkbox" value="ご新規様">ご新規様</label></li>
     </ul>
     <div class="team-count-wrap">
