@@ -161,13 +161,18 @@ async function syncCloud() {
   const selected = [];
   document.querySelectorAll('#participants-list input:checked').forEach(cb => selected.push(cb.value));
   const count = document.getElementById('team-count').value;
-  // チェックボックス操作時は、結果(result_html)をリセットせずに現在の内容を維持して送信
-  const currentResult = document.getElementById("result").innerHTML;
-  await _supabase.from('player').update({ 
+  
+  // resultエリアが空の場合でも、NULLではなく空文字を送るように徹底
+  const resultDiv = document.getElementById("result");
+  const currentResult = resultDiv ? resultDiv.innerHTML : "";
+
+  const { error } = await _supabase.from('player').update({ 
     selected_names: selected, 
     team_count: count,
     result_html: currentResult 
   }).eq('id', 1);
+
+  if (error) console.error("送信エラー:", error);
 }
 
 // --- チーム分け実行 ---
