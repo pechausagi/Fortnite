@@ -111,62 +111,85 @@
       "sb_publishable_NeSyvgn5fyJeuDlOMfwUYg_iPGrYzV6"
     );
 
-    // --- リアルタイム同期ロジック ---
-    async function init() {
-      // 1. 初回データ読み込み
-      const { data } = await _supabase.from('player').select('*').eq('id', 1).single();
-      if (data) applyData(data.selected_names, data.team_count);
+// --- リアルタイム同期ロジック ---
+async function init() {
+  // 1. 初回データ読み込み（result_htmlも取得するように変更）
+  const { data } = await _supabase.from('player').select('*').eq('id', 1).single();
+  if (data) applyData(data.selected_names, data.team_count, data.result_html);
 
-      // 2. 他人の変更をリアルタイム監視
-      _supabase.channel('player_changes')
-        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'player', filter: 'id=eq.1' }, payload => {
-          applyData(payload.new.selected_names, payload.new.team_count);
-        }).subscribe();
-    }
+  // 2. 他人の変更をリアルタイム監視
+  _supabase.channel('player_changes')
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'player', filter: 'id=eq.1' }, payload => {
+      // 受信した新しいデータ（result_html含む）を画面に反映
+      applyData(payload.new.selected_names, payload.new.team_count, payload.new.result_html);
+    }).subscribe();
+}
 
-    function applyData(names, count) {
-      document.querySelectorAll('#participants-list input').forEach(cb => {
-        cb.checked = names.includes(cb.value);
-      });
-      document.getElementById('team-count').value = count;
-    }
+function applyData(names, count, resultHtml) {
+  // 名前リストのチェック状態を復元
+  document.querySelectorAll('#participants-list input').forEach(cb => {
+    cb.checked = names ? names.includes(cb.value) : false;
+  });
+  // チーム数を復元
+  document.getElementById('team-count').value = count;
+  // ★重要：チーム分けの結果（見た目）を復元
+  if (resultHtml) {
+    document.getElementById("result").innerHTML = resultHtml;
+  } else {
+    document.getElementById("result").innerHTML = '';
+  }
+}
 
-    async function syncCloud() {
-      const selected = [];
-      document.querySelectorAll('#participants-list input:checked').forEach(cb => selected.push(cb.value));
-      const count = document.getElementById('team-count').value;
-      await _supabase.from('player').update({ selected_names: selected, team_count: count }).eq('id', 1);
-    }
+async function syncCloud() {
+  const selected = [];
+  document.querySelectorAll('#participants-list input:checked').forEach(cb => selected.push(cb.value));
+  const count = document.getElementById('team-count').value;
+  // チェックボックス操作時は、結果(result_html)をリセットせずに現在の内容を維持して送信
+  const currentResult = document.getElementById("result").innerHTML;
+  await _supabase.from('player').update({ 
+    selected_names: selected, 
+    team_count: count,
+    result_html: currentResult 
+  }).eq('id', 1);
+}
 
-    // イベント登録
-    document.querySelectorAll('#participants-list input').forEach(el => el.addEventListener('change', syncCloud));
-    document.getElementById('team-count').addEventListener('input', syncCloud);
+// --- チーム分け実行 ---
+async function splitTeams() {
+  const selected = [];
+  document.querySelectorAll('#participants-list input:checked').forEach(cb => selected.push(cb.value));
+  const teamCount = parseInt(document.getElementById('team-count').value);
 
-    // --- チーム分け実行 ---
-    function splitTeams() {
-      const selected = [];
-      document.querySelectorAll('#participants-list input:checked').forEach(cb => selected.push(cb.value));
-      const teamCount = parseInt(document.getElementById('team-count').value);
+  if (selected.length < teamCount) return alert("人数が足りません！");
 
-      if (selected.length < teamCount) return alert("人数が足りません！");
+  // ランダムにシャッフル
+  const shuffled = selected.sort(() => Math.random() - 0.5);
+  const teams = Array.from({ length: teamCount }, () => []);
+  shuffled.forEach((name, i) => teams[i % teamCount].push(name));
 
-      const shuffled = selected.sort(() => Math.random() - 0.5);
-      const teams = Array.from({ length: teamCount }, () => []);
-      shuffled.forEach((name, i) => teams[i % teamCount].push(name));
+  // 表示用HTMLを作成
+  const htmlContent = teams.map((team, i) => `
+    <div class="team-card"><strong>チーム${i+1}</strong><ul>${team.map(n => `<li>${n}</li>`).join('')}</ul></div>
+  `).join('');
 
-      const resultDiv = document.getElementById("result");
-      resultDiv.innerHTML = teams.map((team, i) => `
-        <div class="team-card"><strong>チーム${i+1}</strong><ul>${team.map(n => `<li>${n}</li>`).join('')}</ul></div>
-      `).join('');
-    }
+  // 自分の画面を更新
+  document.getElementById("result").innerHTML = htmlContent;
 
-    function resetAll() {
-      document.querySelectorAll('#participants-list input').forEach(cb => cb.checked = false);
-      document.getElementById('result').innerHTML = '';
-      syncCloud();
-    }
+  // ★重要：シャッフルした「結果」をSupabaseに保存して全員に飛ばす
+  await _supabase.from('player').update({ 
+    selected_names: selected, 
+    team_count: teamCount,
+    result_html: htmlContent 
+  }).eq('id', 1);
+}
 
-    init();
+function resetAll() {
+  document.querySelectorAll('#participants-list input').forEach(cb => cb.checked = false);
+  document.getElementById('result').innerHTML = '';
+  // リセット時もクラウドに通知
+  syncCloud();
+}
+
+init();
   </script>
 </body>
 </html>
