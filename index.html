@@ -111,18 +111,35 @@
       "sb_publishable_NeSyvgn5fyJeuDlOMfwUYg_iPGrYzV6"
     );
 
-// --- リアルタイム同期ロジック ---
 async function init() {
-  // 1. 初回データ読み込み（result_htmlも取得するように変更）
-  const { data } = await _supabase.from('player').select('*').eq('id', 1).single();
-  if (data) applyData(data.selected_names, data.team_count, data.result_html);
+  // 1. 初回データ読み込み
+  const { data, error } = await _supabase.from('player').select('*').eq('id', 1).single();
+  
+  if (error) {
+    console.error("データ取得失敗:", error);
+  } else if (data) {
+    // 取得したデータを画面に反映（result_htmlも渡す）
+    applyData(data.selected_names || [], data.team_count || 2, data.result_html || '');
+  }
 
   // 2. 他人の変更をリアルタイム監視
   _supabase.channel('player_changes')
-    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'player', filter: 'id=eq.1' }, payload => {
-      // 受信した新しいデータ（result_html含む）を画面に反映
-      applyData(payload.new.selected_names, payload.new.team_count, payload.new.result_html);
-    }).subscribe();
+    .on('postgres_changes', { 
+      event: 'UPDATE', 
+      schema: 'public', 
+      table: 'player', 
+      filter: 'id=eq.1' 
+    }, payload => {
+      console.log("更新を受信:", payload.new);
+      // 受信した新しいデータを確実に反映
+      applyData(
+        payload.new.selected_names, 
+        payload.new.team_count, 
+        payload.new.result_html
+      );
+    }).subscribe((status) => {
+      console.log("接続状況:", status);
+    });
 }
 
 function applyData(names, count, resultHtml) {
