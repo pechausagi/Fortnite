@@ -111,94 +111,62 @@
       "sb_publishable_NeSyvgn5fyJeuDlOMfwUYg_iPGrYzV6"
     );
 
-// --- 1. 初期化とリアルタイム監視 ---
-async function init() {
-  // 初回読み込み
-  const { data } = await _supabase.from('player').select('*').eq('id', 1).single();
-  if (data) applyData(data);
+ // --- リアルタイム同期ロジック ---
+    async function init() {
+      // 1. 初回データ読み込み
+      const { data } = await _supabase.from('player').select('*').eq('id', 1).single();
+      if (data) applyData(data.selected_names, data.team_count);
 
-  // リアルタイム監視開始
-  _supabase.channel('player_changes')
-    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'player', filter: 'id=eq.1' }, payload => {
-      console.log("更新キャッチ:", payload.new);
-      applyData(payload.new);
-    }).subscribe();
-}
+      // 2. 他人の変更をリアルタイム監視
+      _supabase.channel('player_changes')
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'player', filter: 'id=eq.1' }, payload => {
+          applyData(payload.new.selected_names, payload.new.team_count);
+        }).subscribe();
+    }
 
-// データを画面に反映する共通関数
-function applyData(data) {
-  if (!data) return;
-  
-  // チェックボックスの復元
-  const names = data.selected_names || [];
-  document.querySelectorAll('#participants-list input').forEach(cb => {
-    cb.checked = names.includes(cb.value);
-  });
+    function applyData(names, count) {
+      document.querySelectorAll('#participants-list input').forEach(cb => {
+        cb.checked = names.includes(cb.value);
+      });
+      document.getElementById('team-count').value = count;
+    }
 
-  // チーム数の復元
-  if (data.team_count) {
-    document.getElementById('team-count').value = data.team_count;
-  }
+    async function syncCloud() {
+      const selected = [];
+      document.querySelectorAll('#participants-list input:checked').forEach(cb => selected.push(cb.value));
+      const count = document.getElementById('team-count').value;
+      await _supabase.from('player').update({ selected_names: selected, team_count: count }).eq('id', 1);
+    }
 
-  // チーム分け結果(HTML)の復元
-  const resultDiv = document.getElementById("result");
-  if (resultDiv) {
-    resultDiv.innerHTML = data.result_html || '';
-  }
-}
+    // イベント登録
+    document.querySelectorAll('#participants-list input').forEach(el => el.addEventListener('change', syncCloud));
+    document.getElementById('team-count').addEventListener('input', syncCloud);
 
-// --- 2. クラウドへの保存 (同期) ---
-async function syncCloud() {
-  const selected = [];
-  document.querySelectorAll('#participants-list input:checked').forEach(cb => selected.push(cb.value));
-  const count = document.getElementById('team-count').value;
-  const currentResult = document.getElementById("result").innerHTML;
+    // --- チーム分け実行 ---
+    function splitTeams() {
+      const selected = [];
+      document.querySelectorAll('#participants-list input:checked').forEach(cb => selected.push(cb.value));
+      const teamCount = parseInt(document.getElementById('team-count').value);
 
-  // ここでエラーが出やすいので、安全に送る
-  const { error } = await _supabase.from('player').update({ 
-    selected_names: selected, 
-    team_count: parseInt(count), // 数字として送る
-    result_html: currentResult || "" // NULLにならないように空文字を保証
-  }).eq('id', 1);
+      if (selected.length < teamCount) return alert("人数が足りません！");
 
-  if (error) console.error("送信失敗:", error.message);
-}
+      const shuffled = selected.sort(() => Math.random() - 0.5);
+      const teams = Array.from({ length: teamCount }, () => []);
+      shuffled.forEach((name, i) => teams[i % teamCount].push(name));
 
-// --- 3. チーム分けボタン用 ---
-async function splitTeams() {
-  const selected = [];
-  document.querySelectorAll('#participants-list input:checked').forEach(cb => selected.push(cb.value));
-  const teamCount = parseInt(document.getElementById('team-count').value);
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = teams.map((team, i) => `
+        <div class="team-card"><strong>チーム${i+1}</strong><ul>${team.map(n => `<li>${n}</li>`).join('')}</ul></div>
+      `).join('');
+    }
 
-  if (selected.length < teamCount) return alert("人数が足りません！");
+    function resetAll() {
+      document.querySelectorAll('#participants-list input').forEach(cb => cb.checked = false);
+      document.getElementById('result').innerHTML = '';
+      syncCloud();
+    }
 
-  const shuffled = selected.sort(() => Math.random() - 0.5);
-  const teams = Array.from({ length: teamCount }, () => []);
-  shuffled.forEach((name, i) => teams[i % teamCount].push(name));
-
-  const htmlContent = teams.map((team, i) => `
-    <div class="team-card"><strong>チーム${i+1}</strong><ul>${team.map(n => `<li>${n}</li>`).join('')}</ul></div>
-  `).join('');
-
-  // 画面を更新
-  document.getElementById("result").innerHTML = htmlContent;
-
-  // Supabaseに全データを送る
-  await _supabase.from('player').update({ 
-    selected_names: selected, 
-    team_count: teamCount,
-    result_html: htmlContent 
-  }).eq('id', 1);
-}
-
-function resetAll() {
-  document.querySelectorAll('#participants-list input').forEach(cb => cb.checked = false);
-  document.getElementById('result').innerHTML = '';
-  syncCloud();
-}
-
-// 最後に実行
-init();
+    init();
   </script>
 </body>
 </html>
