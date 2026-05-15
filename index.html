@@ -51,34 +51,8 @@
 
     <h2>メンバーリスト</h2>
     <ul class="participants" id="participants-list">
-      <li><label><input type="checkbox" value="ぱいな">ぱいな</label></li>
-      <li><label><input type="checkbox" value="しぇふ">しぇふ</label></li>
-      <li><label><input type="checkbox" value="りお">りお</label></li>
-      <li><label><input type="checkbox" value="しお">しお</label></li>
-      <li><label><input type="checkbox" value="るね">るね</label></li>
-      <li><label><input type="checkbox" value="ゆー">ゆー</label></li>
-      <li><label><input type="checkbox" value="さとふる">さとふる</label></li>
-      <li><label><input type="checkbox" value="しろ">しろ</label></li>
-      <li><label><input type="checkbox" value="すぺーど">すぺーど</label></li>
-      <li><label><input type="checkbox" value="ちばっと">ちばっと</label></li>
-      <li><label><input type="checkbox" value="ちーな">ちーな</label></li>
-      <li><label><input type="checkbox" value="もこ">もこ</label></li>
-      <li><label><input type="checkbox" value="ぺぺみや">ぺぺみや</label></li>
-      <li><label><input type="checkbox" value="りご">りご</label></li>
-      <li><label><input type="checkbox" value="きんちゃん">きんちゃん</label></li>
-      <li><label><input type="checkbox" value="ぺちゃうさ">ぺちゃうさ</label></li>
-      <li><label><input type="checkbox" value="そうさん">そうさん</label></li>
-      <li><label><input type="checkbox" value="おは">おは</label></li>
-      <li><label><input type="checkbox" value="REI">REI</label></li>
-      <li><label><input type="checkbox" value="とーれす">とーれす</label></li>
-      <li><label><input type="checkbox" value="さとぽん">さとぽん</label></li>
-      <li><label><input type="checkbox" value="けい">けい</label></li>
-      <li><label><input type="checkbox" value="ぺっぺん">ぺっぺん</label></li>
-      <li><label><input type="checkbox" value="やっさん">やっさん</label></li>
-      <li><label><input type="checkbox" value="なっちゃん">なっちゃん</label></li>
-      <li><label><input type="checkbox" value="うど">うど</label></li>
-      <li><label><input type="checkbox" value="ご新規様">ご新規様</label></li>
-    </ul>
+  <!-- ここはJavaScriptで自動作成されるので空でOK -->
+</ul>
     <div class="team-count-wrap">
       チーム数:
       <input type="number" id="team-count" min="2" value="2">
@@ -94,76 +68,103 @@
    <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script>
-    // --- 時計 ---
-    function updateClock() {
-      const clock = document.getElementById('digital-clock');
-      const now = new Date();
-      clock.textContent = now.toLocaleTimeString('ja-JP', { hour12: false });
-    }
-    setInterval(updateClock, 1000); updateClock();
+    // --- 時計機能 ---
+  function updateClock() {
+    const clock = document.getElementById('digital-clock');
+    const now = new Date();
+    clock.textContent = now.toLocaleTimeString('ja-JP', { hour12: false });
+  }
+  setInterval(updateClock, 1000); updateClock();
 
-    // --- Supabase設定 (既存の情報を利用) ---
-    const _supabase = window.supabase.createClient(
-      "https://uaxtrxgoopiduniqzqla.supabase.co",
-      "sb_publishable_NeSyvgn5fyJeuDlOMfwUYg_iPGrYzV6"
-    );
+  // --- Supabase設定 ---
+  const _supabase = window.supabase.createClient(
+    "https://uaxtrxgoopiduniqzqla.supabase.co",
+    "sb_publishable_NeSyvgn5fyJeuDlOMfwUYg_iPGrYzV6"
+  );
 
- // --- リアルタイム同期ロジック ---
-    async function init() {
-      // 1. 初回データ読み込み
-      const { data } = await _supabase.from('player').select('*').eq('id', 1).single();
-      if (data) applyData(data.selected_names, data.team_count);
+  // --- 1. 初期化処理（ページを開いた時に動く） ---
+  async function init() {
+    // A. membersテーブルからメンバー一覧を取得して表示
+    await fetchMembers();
 
-      // 2. 他人の変更をリアルタイム監視
-      _supabase.channel('player_changes')
-        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'player', filter: 'id=eq.1' }, payload => {
-          applyData(payload.new.selected_names, payload.new.team_count);
-        }).subscribe();
-    }
+    // B. playerテーブルから現在のチェック状態を読み込み
+    const { data } = await _supabase.from('player').select('*').eq('id', 1).single();
+    if (data) applyData(data.selected_names, data.team_count);
 
-    function applyData(names, count) {
-      document.querySelectorAll('#participants-list input').forEach(cb => {
-        cb.checked = names.includes(cb.value);
-      });
-      document.getElementById('team-count').value = count;
-    }
+    // C. リアルタイム監視（他人が更新した時に自分の画面も変わる設定）
+    _supabase.channel('player_changes')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'player', filter: 'id=eq.1' }, payload => {
+        applyData(payload.new.selected_names, payload.new.team_count);
+      }).subscribe();
+  }
 
-    async function syncCloud() {
-      const selected = [];
-      document.querySelectorAll('#participants-list input:checked').forEach(cb => selected.push(cb.value));
-      const count = document.getElementById('team-count').value;
-      await _supabase.from('player').update({ selected_names: selected, team_count: count }).eq('id', 1);
-    }
+  // --- 2. データベースからメンバー名を取ってきてHTMLを作る ---
+  async function fetchMembers() {
+    const { data, error } = await _supabase
+      .from('members')
+      .select('*')
+      .order('id', { ascending: true });
 
-    // イベント登録
-    document.querySelectorAll('#participants-list input').forEach(el => el.addEventListener('change', syncCloud));
-    document.getElementById('team-count').addEventListener('input', syncCloud);
-
-    // --- チーム分け実行 ---
-    function splitTeams() {
-      const selected = [];
-      document.querySelectorAll('#participants-list input:checked').forEach(cb => selected.push(cb.value));
-      const teamCount = parseInt(document.getElementById('team-count').value);
-
-      if (selected.length < teamCount) return alert("人数が足りません！");
-
-      const shuffled = selected.sort(() => Math.random() - 0.5);
-      const teams = Array.from({ length: teamCount }, () => []);
-      shuffled.forEach((name, i) => teams[i % teamCount].push(name));
-
-      const resultDiv = document.getElementById("result");
-      resultDiv.innerHTML = teams.map((team, i) => `
-        <div class="team-card"><strong>チーム${i+1}</strong><ul>${team.map(n => `<li>${n}</li>`).join('')}</ul></div>
-      `).join('');
+    if (error) {
+      console.error("データ取得エラー:", error);
+      return;
     }
 
-    function resetAll() {
-      document.querySelectorAll('#participants-list input').forEach(cb => cb.checked = false);
-      document.getElementById('result').innerHTML = '';
-      syncCloud();
-    }
+    const list = document.getElementById('participants-list');
+    // 重要：ここでチェックボックスを自動生成しています
+    list.innerHTML = data.map(m => `
+      <li>
+        <label>
+          <input type="checkbox" value="${m.name}" onchange="syncCloud()">
+          ${m.name}
+        </label>
+      </li>
+    `).join('');
+  }
 
-    init();
+  // --- 3. 画面の表示を更新する ---
+  function applyData(names, count) {
+    document.querySelectorAll('#participants-list input').forEach(cb => {
+      cb.checked = names.includes(cb.value);
+    });
+    document.getElementById('team-count').value = count;
+  }
+
+  // --- 4. チェック状態をSupabase（playerテーブル）に保存する ---
+  async function syncCloud() {
+    const selected = [];
+    document.querySelectorAll('#participants-list input:checked').forEach(cb => selected.push(cb.value));
+    const count = document.getElementById('team-count').value;
+    await _supabase.from('player').update({ selected_names: selected, team_count: count }).eq('id', 1);
+  }
+
+  // チーム分け実行
+  function splitTeams() {
+    const selected = [];
+    document.querySelectorAll('#participants-list input:checked').forEach(cb => selected.push(cb.value));
+    const teamCount = parseInt(document.getElementById('team-count').value);
+
+    if (selected.length < teamCount) return alert("人数が足りません！");
+
+    const shuffled = selected.sort(() => Math.random() - 0.5);
+    const teams = Array.from({ length: teamCount }, () => []);
+    shuffled.forEach((name, i) => teams[i % teamCount].push(name));
+
+    const resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = teams.map((team, i) => `
+      <div class="team-card"><strong>チーム${i+1}</strong><ul>${team.map(n => `<li>${n}</li>`).join('')}</ul></div>
+    `).join('');
+  }
+
+  // リセット
+  function resetAll() {
+    document.querySelectorAll('#participants-list input').forEach(cb => cb.checked = false);
+    document.getElementById('result').innerHTML = '';
+    syncCloud();
+  }
+
+  // 最後に実行
+  init();
   </script>
 </body>
 </html>
